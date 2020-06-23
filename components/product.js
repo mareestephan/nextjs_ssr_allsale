@@ -83,28 +83,32 @@ class Product extends React.Component {
                             float: "left"
                         }}
                     >
-                        {/* <small className="font-weight-bold">
 
-
-
-                            <h1 className="font-weight-bold">{this.props.products[0].slug.substring(4)}</h1>
-
-
-
-
-
-                        </small> */}
-
-                        {/* Using substring we only display after the 4th character of the slug property */}
-
-
+                    </span>
+                    <span
+                        className="display-4"
+                        style={{
+                            fontSize: "1.4rem",
+                            float: "left"
+                        }}
+                    >
                         <small className="font-weight-bold">
-
-                            <span >{this.props.products[0].slug.substring(4).toUpperCase()} </span>
+                            <a href="/c/accessories/fa">CATEGORIES</a>
                         </small>
 
 
+                        {/* Using substring we only display after the 4th character of the slug property */}
 
+                        <small >
+                            {" "}
+                            > <h1 style={{
+                                fontSize: "1.2rem",
+                                fontWeight: "600",
+                                display: "inline-block"
+
+
+                            }} >{this.props.products[0].slug.substring(4).toUpperCase()}</h1>
+                        </small>
                     </span>
                 </div>
                 <div
