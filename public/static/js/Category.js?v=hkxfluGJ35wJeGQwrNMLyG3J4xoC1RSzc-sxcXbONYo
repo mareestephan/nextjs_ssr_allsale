@@ -1,0 +1,234 @@
+﻿async function getCategory(initial = false, scroll = true) {
+    var id = document.getElementById("Category_Id").value;
+    var code = document.getElementById("Category_CategoryCode").value;
+    var pageNo = document.getElementById("PageNo").value;
+    var pageSize = document.getElementById("PageSize").value;
+    var sort = document.getElementById("Sort").value;
+    var filter = "";
+
+    var catFilter = $("#category input.categoryFilter:checked");
+    if (catFilter.length > 0) {
+        var catString = "";
+        for (var i = 0; i < catFilter.length; i++) {
+            catString += "," + encodeURIComponent($(catFilter[i]).attr("data-value"));
+        }
+        catString = catString.substr(1); //Remove leading comma
+        filter += "&category=" + catString;
+    }
+    var brandFilter = $("#brand input.brandFilter:checked");
+    if (brandFilter.length > 0) {
+        var brandString = "";
+        for (var j = 0; j < brandFilter.length; j++) {
+            brandString += "," + encodeURIComponent($(brandFilter[j]).attr("data-value"));
+        }
+        brandString = brandString.substr(1); //Remove leading comma
+        filter += "&brand=" + brandString;
+    }
+    var genderFilter = $("#gender input.genderFilter:checked");
+    if (genderFilter.length > 0) {
+        var genderString = "";
+        for (var k = 0; k < genderFilter.length; k++) {
+            genderString += "," + encodeURIComponent($(genderFilter[k]).attr("data-value"));
+        }
+        genderString = genderString.substr(1); //Remove leading comma
+        filter += "&gender=" + genderString;
+    }
+    var sizeFilter = $("#size input.sizeFilter:checked");
+    if (sizeFilter.length > 0) {
+        var sizeString = "";
+        for (var l = 0; l < sizeFilter.length; l++) {
+            sizeString += "," + encodeURIComponent($(sizeFilter[l]).attr("data-value"));
+        }
+        sizeString = sizeString.substr(1); //Remove leading comma
+        filter += "&size=" + sizeString;
+    }
+    var colourFilter = $("#color input.colourFilter:checked");
+    if (colourFilter.length > 0) {
+        var colourString = "";
+        for (var m = 0; m < colourFilter.length; m++) {
+            colourString += "," + encodeURIComponent($(colourFilter[m]).attr("data-value"));
+        }
+        colourString = colourString.substr(1); //Remove leading comma
+        filter += "&colour=" + colourString;
+    }
+    var maxPrice = $(".priceFilter").val();
+    if (maxPrice > 0) {
+        filter += "&maxPrice=" + maxPrice;
+    }
+    var ajaxUrl = "/ajax/categorygrid?code=" + encodeURIComponent(code) + "&pageNo=" + pageNo + "&pageSize=" + pageSize + "&sort=" + encodeURIComponent(sort);
+    if (filter !== "") {
+        ajaxUrl = ajaxUrl + filter;
+    }
+    let category = await qf(ajaxUrl);
+    var openFilters = [];
+    $("#filterBy .filterToggle:not(.collapsed)").each(function () {
+        openFilters.push("#" + this.id);
+    });
+    var openBrands = [];
+    $(".showMoreDiv:visible").each(function () {
+        openBrands.push(this.attributes["data-page"].value);
+    });
+    $("#rowGrid").html(category);
+    openFilters.forEach(function (x) {
+        $(x).removeClass("collapsed");
+        $(x).attr("aria-expanded", true);
+        $(x).parent().children(".filterList").addClass("show");
+    });
+    openBrands.forEach(function (x) {
+        $("#showMoreDiv" + x).show();
+        $(".showMore[data-target='" + x + "']").hide();
+        $(".hideMore[data-target='" + x + "']").hide();
+    });
+    if (scroll) {
+        $('body,html').animate({
+            scrollTop: 0
+        }, 500);
+    }
+    var totalPages = $("#TotalPages").val();
+    var totalProducts = $("#TotalProducts").val();
+    $(".resultCount").html(totalProducts + " PRODUCTS FOUND");
+    let paging = await qf("/ajax/pagingajax?pageNo=" + pageNo + "&totalPages=" + totalPages);
+    $("#catPaging").html(paging);
+    //$("#catSize button").html("VIEW " + pageSize + " PER PAGE");
+    //var sortText = $("#sortOrder a[data-sort='" + sort + "']").html();
+    //$("#sortOrder button").html("ORDER BY " + sortText);
+
+    if (!initial) {
+        var url = "";
+        if (pageNo !== "1") {
+            url += "?pageNo=" + pageNo;
+        }
+        if (pageSize !== "20") {
+            url += "&pageSize=" + pageSize;
+        }
+        if (sort !== "Newest") {
+            url += "&sort=" + sort;
+        }
+        if (filter !== "") {
+            url += filter;
+        }
+        if (url.length > 0 && url[0] === "&") {
+            url = url.replace("&", "?");
+        }
+
+        saveState(document.location.pathname + url);
+    }
+
+    gtmCategory();
+}
+
+function loadCategory() {
+    saveState(document.location);
+    $("#rowPaging").on("click", "#catPaging .linkPage", function (e) {
+        e.preventDefault();
+        $("#PageNo").val($(this).attr("data-page"));
+        getCategory();
+    });
+    $("#rowGrid").on("click", "#searchSize a", function (e) {
+        e.preventDefault();
+        $("#PageNo").val(1);
+        $("#PageSize").val($(this).attr("data-size"));
+        getCategory();
+    });
+    $("#rowGrid").on("click", "#sortOrder a", function (e) {
+        e.preventDefault();
+        $("#PageNo").val(1);
+        $("#Sort").val($(this).attr("data-sort"));
+        getCategory();
+    });
+    $("#rowGrid").on("change", ".filterList input", function (e) {
+        $("#PageNo").val(1);
+        getCategory(false, false);
+    });
+    $("#rowGrid").on("change", ".priceFilter", function () {
+        $("#PageNo").val(1);
+        getCategory(false, false);
+    });
+    $("#rowGrid").on("input", ".priceFilter", function () {
+        $("#displayPrice").html("R" + $(this).val());
+    });
+    $("#rowGrid").on("click", ".showMore", function (e) {
+        e.preventDefault();
+        var target = $(this).attr("data-target");
+        $(".showMoreDiv[data-page='" + target + "']").show();
+        $(this).hide();
+        $(".hideMore[data-target='" + target + "']").hide();
+    });
+    $("#rowGrid").on("click", ".hideMore", function (e) {
+        e.preventDefault();
+        $(".showMoreDiv").hide();
+        $(".showMore").show();
+        $(".hideMore").show();
+    });
+    $("#rowGrid").on("click", ".subCategoryFilter .removeFilter", function (e) {
+        e.preventDefault();
+        $("#PageNo").val(1);
+        var elem = $(this);
+        var type = elem.attr("data-type");
+        if (type === "Price") {
+            $(".priceFilter").val(0);
+        }
+        else {
+            var value = elem.attr("data-value");
+            var filter = $("." + type.toLowerCase() + "Filter[data-value=\"" + value + "\"]");
+            filter.prop("checked", false);
+        }
+        elem.remove();
+        getCategory();
+    });
+    $(window).on("popstate", function (e) {
+        var state = e.originalEvent.state;
+        $("#rowGrid").html(state.grid);
+        $("#rowPaging").html(state.paging);
+    });
+    gtmCategory();
+}
+
+function saveState(url) {
+    var state = {
+        grid: $("#rowGrid").html(),
+        paging: $("#rowPaging").html()
+    };
+
+    history.pushState(state, "Category", url);
+}
+
+async function qf(url) {
+    return fetch(url)
+        .then(response => response.text())
+        .then(data => data);
+}
+
+function gtmCategory() {
+    var prods = [];
+    var htmlProds = $("#gtmData .gtmDataItem");
+    for (var i = 0; i < htmlProds.length; i++) {
+        htmlProd = $(htmlProds[i]);
+        var sku = htmlProd.data("sku");
+        var name = htmlProd.data("name");
+        var price = htmlProd.data("price");
+        var brand = htmlProd.data("brand");
+        var category = htmlProd.data("category");
+        var variant = htmlProd.data("variant");
+        var position = htmlProd.data("count");
+        var prod = {
+            'name': name,
+            'id': sku,
+            'price': price,
+            'brand': brand,
+            'category': category,
+            'variant': variant,
+            'list': 'Category',
+            'position': position
+        };
+        prods.push(prod);
+    }
+
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+        'ecommerce': {
+            'currencyCode': 'ZAR',
+            'impressions': prods
+        }
+    });
+}
