@@ -8,9 +8,10 @@ import Head from 'next/head'
 export async function getServerSideProps({ params }) {
 
     const res = await fetch(
-        // `https://my-json-server.typicode.com/mareestephan/jsonProducts/pages_to_create `
         // `http://www.json-generator.com/api/json/get/ckeElWByRe?indent=2`
-        `http://35.190.35.153/api/pages-to-create/all-sale`
+        // `http://35.190.35.153/api/pages-to-create/all-sale`
+
+        `http://35.190.35.153/api/pages-to-create/all-sale?slug=${params.category}`
     )
 
     const posts = await res.json();
@@ -29,13 +30,13 @@ export default class extends Component {
 
     render() {
 
-        // const meta_description_full = this.props.displayProducts[0].meta_description;
 
         const meta_description_limit = 165;
         const trimmed_meta_description = this.props.displayProducts[0].meta_description.substring(0, meta_description_limit);
+
+
         return (
             <div >
-                {/* content={this.props.displayProducts[0].meta_description} */}
                 <Layout>
                     <Head>
                         <title>{this.props.displayProducts[0].meta_title}</title>

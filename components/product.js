@@ -19,7 +19,8 @@ class Product extends React.Component {
                         <div className="card product mb-0 mb-sm-2 ">
                             <div className="pb-2 px-2 mx-auto">
                                 <img
-                                    src={"https://www.allsale.co.za/cdn-cgi/image/width=180,height=180/prodimage/AKU-GE275-ST/1.jpg"}
+                                    // src={"https://www.allsale.co.za/cdn-cgi/image/width=180,height=180/prodimage/AKU-GE275-ST/1.jpg"}
+                                    src={product.product_image}
                                     className="card-img-top"
                                     aria-label="image for product"
                                 />
