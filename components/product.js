@@ -853,8 +853,34 @@ class Product extends React.Component {
 
 
                         </div>
+
+                        {/* +++++ ++++++ ++++++++ DESCRIPTION BOX ++++++ +++++ ++++++ +++++*/}
+
+
+
+                        {/* <div className="row mb-3" style={{ boxShadow: "0px 3px 8px - 4px rgba(0, 0, 0, .15)" }}>
+                            <div className="col-12  guide collapse-link mx-0 px-0" style={{ backgroundColor: " white!important" }}>
+                                <div className="p-2 product-details-reviews guide">
+                                    <div className="collapse show" id="details">
+                                        <div className="row mt-4 mx-1">
+                                            <div className="col-12 col-sm-12 guide px-0 px-sm-5">
+                                                <h6>DESCRIPTION</h6>
+                                                <p itemprop="description">{this.props.products[0].onpage_description}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> */}
+
+
+                        {/* +++++ ++++++ ++++++++END OF DESCRIPTION BOX ++++++ +++++ ++++++ +++++*/}
+
+
                     </div>
-                </div>
+
+                </div >
+
 
                 <div id="rowPaging" className="row">
                     <div className="col-10 col-sm-12 pr-0 text-right">

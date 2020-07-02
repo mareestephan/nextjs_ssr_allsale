@@ -34,7 +34,6 @@ class Categories extends React.Component {
         )
 
 
-        console.log(listItems.length)
 
 
         var resultsRender = [];
